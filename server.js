@@ -1,27 +1,23 @@
 const express = require("express");
-const app = express();
+const mongoose = require("mongoose");
 const cors = require("cors");
-const dbConnection = require("./src/connection/mongodb.connection");
-const userRoutes = require("./src/routes/users.route");
-const profileRoutes = require("./src/routes/profile.route");
-const paymentRoutes = require("./src/routes/payment.route");
-const furnitureRoutes = require("./src/routes/furniture.route");
-require("dotenv").config();
+const bodyParser = require("body-parser");
+const transactionRoutes = require("./routes/transaction.route");
 
-app.use(
-  cors({
-    origin: "*",
+const app = express();
+app.use(cors());
+app.use(bodyParser.json());
+
+// MongoDB connection
+mongoose
+  .connect("mongodb://localhost:27017/furniture_rental", {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
   })
-);
-app.use(express.json());
+  .then(() => console.log("MongoDB connected"))
+  .catch((err) => console.error("MongoDB connection error:", err));
 
-app.use("/auth", userRoutes);
-app.use("/profile", profileRoutes);
-app.use("/payment", paymentRoutes);
-app.use("/furniture", furnitureRoutes);
+// Routes
+app.use("/api/transaction", transactionRoutes);
 
-const port = 3000;
-app.listen(port, () => {
-  dbConnection(process.env.MONGODB_URL);
-  console.log("Server is listening on port", port);
-});
+app.listen(5000, () => console.log("Server running on port 5000"));

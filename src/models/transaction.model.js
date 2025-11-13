@@ -1,47 +1,21 @@
 const mongoose = require("mongoose");
 
-const transactionSchema = mongoose.Schema({
-  email: {
-    type: String,
-    required: true,
-    trim: true,
-  },
-  amount: {
-    type: Number,
-    required: true,
-  },
-  status: {
-    type: String,
-    enum: ["pending", "completed", "failed"],
-    default: "pending",
-  },
-  items: [
-    {
-      furnitureId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "Furniture",
-        required: true,
+const transactionSchema = new mongoose.Schema(
+  {
+    email: { type: String, required: true },
+    amount: { type: Number, required: true },
+    items: [
+      {
+        furnitureId: { type: mongoose.Schema.Types.ObjectId, ref: "Furniture" },
+        quantity: Number,
+        priceAtTime: Number,
       },
-      quantity: {
-        type: Number,
-        required: true,
-      },
-      priceAtTime: {
-        type: Number,
-        required: true,
-      },
-    },
-  ],
-  paymentMethod: {
-    type: String,
-    required: true,
+    ],
+    paymentMethod: { type: String, default: "demo-cash" },
+    status: { type: String, default: "successful" },
   },
-  createdAt: {
-    type: Date,
-    default: Date.now,
-  },
-});
+  { timestamps: true }
+);
 
-const Transaction = mongoose.model("Transaction", transactionSchema);
-
-module.exports = Transaction;
+module.exports = mongoose.model("Transaction", transactionSchema);
+        
